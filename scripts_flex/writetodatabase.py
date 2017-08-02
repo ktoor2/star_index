@@ -127,29 +127,29 @@ def writeRowToDatabase(tag_dict, type):
             
         if(type == 'image'):
             print("now running the flex unit")
-            cur.execute ("select * from event_index_main_indexed where event_id = %s and image IS NULL", [event_id])
+            cur.execute ("select * from event_index_main_test where event_id = %s and image IS NULL", [event_id])
             rows = cur.fetchall()
             if not rows:
                 print("executing first time")
-                cur.execute("insert into event_index_main_indexed(event_id,image) values (%s,%s) ", [event_id,data_json] )
+                cur.execute("insert into event_index_main_test(event_id,image) values (%s,%s) ", [event_id,data_json] )
                 conn.commit()
             else:
                 primary_id = rows[0][0]
-                cur.execute("update event_index_main_indexed set image = %s where primary_id = %s", [data_json, primary_id])
+                cur.execute("update event_index_main_test set image = %s where primary_id = %s", [data_json, primary_id])
 
 
 
         if(type == 'text'):
             print("now running the flex unit")
-            cur.execute ("select * from event_index_main_indexed where event_id = %s and textdoc IS NULL", [event_id])
+            cur.execute ("select * from event_index_main_test where event_id = %s and textdoc IS NULL", [event_id])
             rows = cur.fetchall()
             if not rows:
                 print("executing first time")
-                cur.execute("insert into event_index_main_indexed(event_id,textdoc) values (%s,%s) ", [event_id,data_json] )
+                cur.execute("insert into event_index_main_test(event_id,textdoc) values (%s,%s) ", [event_id,data_json] )
                 conn.commit()
             else:
                 primary_id = rows[0][0]
-                cur.execute("update event_index_main_indexed set textdoc = %s where primary_id = %s", [data_json, primary_id])
+                cur.execute("update event_index_main_test set textdoc = %s where primary_id = %s", [data_json, primary_id])
 
         
         conn.commit()
@@ -175,15 +175,15 @@ def deleteFromDatabase(path, type):
         conn = connect()
         cur = conn.cursor()
         if type == 'image':
-            print("executing query....")
+            print("executing query for image")
             cur.execute("""
-                update event_index_main_indexed set image = (case when image->>'path' = %s then NULL else image end)
+                update event_index_main_test set image = (case when image->>'path' = %s then NULL else image end)
                 """, [path])
 
         elif type == 'text':
             print("executing query....")
             cur.execute("""
-                update event_index_main_indexed set textdoc = (case when textdoc->>'path' = %s then NULL else textdoc end)
+                update event_index_main_test set textdoc = (case when textdoc->>'path' = %s then NULL else textdoc end)
                 """, [path])
 
         else:

@@ -10,7 +10,7 @@ time_list = []
 
 def save_time(execution_time):
 
-    file_url = '/home/ubuntu/volume/star_index/tests/write_text_gin.txt'
+    file_url = '/home/ubuntu/volume/star_index/tests/write_text_update.txt'
     with open(file_url, 'a+') as f:
         f.write((str(execution_time)+"\n"))
         
@@ -85,11 +85,10 @@ class Handler(FileSystemEventHandler):
 
         
         if(tag_dict!=0) :
-            time_list = []
+     
             result = writeRowToDatabase(tag_dict,'text')
             execution_time = (time.time() - start_time)*1000
             print(execution_time)
-            print(result)
             save_time(execution_time)
         
         

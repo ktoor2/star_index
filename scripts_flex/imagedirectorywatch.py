@@ -6,7 +6,7 @@ from writetodatabase import writeRowToDatabase,deleteFromDatabase
 from jsonoperations import readOneJson
 
 def save_time(execution_time):
-    file_url = '/home/ubuntu/volume/star_index/tests/write_image_gin.txt'
+    file_url = '/home/ubuntu/volume/star_index/tests/write_image_insert.txt'
     with open(file_url, 'a+') as f:
         f.write((str(execution_time)+"\n"))
 
@@ -79,11 +79,16 @@ class Handler(FileSystemEventHandler):
     def on_deleted(event):
         print("received call on deleted %s" % event.src_path)
         path = event.src_path
-        if '.jpg' not in path:
+        if '.jpg' not in path or '.json' not in path:
             pass
         else:
+            print('now deleting')
+            start_time = time.time()  
             result = deleteFromDatabase(path, 'image')
+            execution_time = (time.time() - start_time)*1000
+            save_time(execution_time)
             print(result)
+            
 
     
 
