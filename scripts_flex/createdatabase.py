@@ -13,7 +13,7 @@ def create_table():
 
 		command=(
 			"""
-			CREATE TABLE event_index_main_test(
+			CREATE TABLE event_index_main_test_q2(
 			primary_id serial PRIMARY KEY,
 			event_id int NOT NULL,
 			event_time timestamp NOT NULL DEFAULT current_timestamp,

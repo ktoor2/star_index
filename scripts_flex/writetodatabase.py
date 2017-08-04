@@ -5,6 +5,7 @@ from jsonoperations import readFromJson
 from dbconnect import connect
 import psycopg2.extras
 import sys
+from runtests import runQueries
 
 arg_list = sys.argv
 data_format = arg_list[0]
@@ -127,29 +128,31 @@ def writeRowToDatabase(tag_dict, type):
             
         if(type == 'image'):
             print("now running the flex unit")
-            cur.execute ("select * from event_index_main_test where event_id = %s and image IS NULL", [event_id])
+            cur.execute ("select * from event_index_main_test_q2 where event_id = %s and image IS NULL", [event_id])
             rows = cur.fetchall()
             if not rows:
                 print("executing first time")
-                cur.execute("insert into event_index_main_test(event_id,image) values (%s,%s) ", [event_id,data_json] )
+                cur.execute("insert into event_index_main_test_q2(event_id,image) values (%s,%s) ", [event_id,data_json] )
+
                 conn.commit()
+                runQueries("explain analyze select * from event_index_main_test_q2 where image@>'{\"XResolution\":[1]}'")
             else:
                 primary_id = rows[0][0]
-                cur.execute("update event_index_main_test set image = %s where primary_id = %s", [data_json, primary_id])
+                cur.execute("update event_index_main_test_q2 set image = %s where primary_id = %s", [data_json, primary_id])
 
 
 
         if(type == 'text'):
             print("now running the flex unit")
-            cur.execute ("select * from event_index_main_test where event_id = %s and textdoc IS NULL", [event_id])
+            cur.execute ("select * from event_index_main_test_q2 where event_id = %s and textdoc IS NULL", [event_id])
             rows = cur.fetchall()
             if not rows:
                 print("executing first time")
-                cur.execute("insert into event_index_main_test(event_id,textdoc) values (%s,%s) ", [event_id,data_json] )
+                cur.execute("insert into event_index_main_test_q2(event_id,textdoc) values (%s,%s) ", [event_id,data_json] )
                 conn.commit()
             else:
                 primary_id = rows[0][0]
-                cur.execute("update event_index_main_test set textdoc = %s where primary_id = %s", [data_json, primary_id])
+                cur.execute("update event_index_main_test_q2 set textdoc = %s where primary_id = %s", [data_json, primary_id])
 
         
         conn.commit()
@@ -175,15 +178,15 @@ def deleteFromDatabase(path, type):
         conn = connect()
         cur = conn.cursor()
         if type == 'image':
-            print("executing query for image")
+            print("executing query....")
             cur.execute("""
-                update event_index_main_test set image = (case when image->>'path' = %s then NULL else image end)
+                update event_index_main_test_q2 set image = (case when image->>'path' = %s then NULL else image end)
                 """, [path])
 
         elif type == 'text':
             print("executing query....")
             cur.execute("""
-                update event_index_main_test set textdoc = (case when textdoc->>'path' = %s then NULL else textdoc end)
+                update event_index_main_test_q2 set textdoc = (case when textdoc->>'path' = %s then NULL else textdoc end)
                 """, [path])
 
         else:
